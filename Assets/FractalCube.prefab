@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 4466181639391318811}
   - component: {fileID: 4466181639391318812}
   m_Layer: 0
-  m_Name: Cube
+  m_Name: FractalCube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
