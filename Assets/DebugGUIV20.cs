@@ -29,13 +29,20 @@ public class DebugGUIV20 : MonoBehaviour
     const float margin = 10.0f; // in pixels
     const float fontHeightBuffer = 5.0f; // in pixels; add to "guiFont.lineHeight"; value depends on font size (why is this needed at all???)
 
-    // gui font rectangle
-    Rect rectLeft = new Rect(); // upper left
-    Rect rectRight = new Rect(); // upper right
+    // gui font rectangles
+    Rect upperLeft = new Rect(); // upper left
+    Rect upperRight = new Rect(); // upper right
+    // /-------------------   -------------------\
+    // | [text goes here]       [text goes here] |
+    // | [text goes here]       [text goes here] |
+    // | [text goes here]       [text goes here] |
+    // |                                         |
 
     // gui fps
-    const int fpsBufferSize = 60; // 60 frame fps buffer
-    float[] fpsBuffer = new float[fpsBufferSize]; // fps buffer; used for min/max/average
+    [Header("FPS Settings")]
+    [Tooltip("FPS sample size (60 = sample FPS for 60 frames).")]
+    public int fpsBufferSize = 60; // 60 = sample fps stats for 60 frames
+    float[] fpsBuffer; // fps buffer; used for min/max/average
     int fpsIndex = 0; // 0..9; index pointer that cycles through fps buffer
     float fpsCurr;
     float fpsCurrFroze; // snapshot a fps read and freeze it on the screen (until buffer updates; currently every 60 frames)
@@ -51,6 +58,9 @@ public class DebugGUIV20 : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        // gui fps
+        fpsBuffer = new float[fpsBufferSize]; // fps buffer; used for min/max/average
+
         // gui depth
         GUI.depth = 0; // larger = further away
 
@@ -96,11 +106,11 @@ public class DebugGUIV20 : MonoBehaviour
         //GUI.contentColor = Color.black;
 
         // gui rectangles
-        rectLeft.x = margin;
-        rectLeft.y = margin;
-        rectLeft.width = Screen.width - margin * 2.0f; // width of screen minus margin? too short will cut off text
-        rectLeft.height = GUI.skin.font.lineHeight + fontHeightBuffer; // add buffer else will cut off text
-        rectRight = rectLeft;
+        upperLeft.x = margin;
+        upperLeft.y = margin;
+        upperLeft.width = Screen.width - margin * 2.0f; // width of screen minus margin? too short will cut off text
+        upperLeft.height = GUI.skin.font.lineHeight + fontHeightBuffer; // add buffer else will cut off text
+        upperRight = upperLeft;
 
         //Rect rect = new Rect();
         //rect.x = 10.0f;
@@ -123,43 +133,43 @@ public class DebugGUIV20 : MonoBehaviour
         // gui output
         GUI.skin.label.alignment = TextAnchor.UpperLeft; // default
         // - app/credit stats
-        GUI.Label(rectLeft, "\"" + Application.productName + "\" v" + Application.version); CRLeft();
-        GUI.Label(rectLeft, "Matthew Doucette, " + Application.companyName); CRLeft();
-        GUI.Label(rectLeft, "http://xona.com/fractal/"); CRLeft();
-        GUI.Label(rectLeft, ""); CRLeft();
-        GUI.Label(rectLeft, "Unity " + Application.unityVersion); CRLeft();
-        GUI.Label(rectLeft, "Build: " + (Debug.isDebugBuild ? "Debug" : "Release")); CRLeft();
-        GUI.Label(rectLeft, "Genuine: " + (Application.genuine ? "Yes (Unaltered)" : "No (Altered)")); CRLeft();
-        GUI.Label(rectLeft, System.DateTime.Now.ToString("dddd, MMMM d, yyyy, h:mm:ss.fff tt")); CRLeft();
-        GUI.Label(rectLeft, ""); CRLeft();
-        GUI.Label(rectLeft, "Resolution: " + Screen.width + "x" + Screen.height); CRLeft();
-        GUI.Label(rectLeft, "Aspect Ratio: " + aspectRatioWidth + ":" + aspectRatioHeight + ": " + ((float)Screen.width / (float)Screen.height).ToString("0.000") + ":1"); CRLeft();
+        GUI.Label(upperLeft, "\"" + Application.productName + "\" v" + Application.version); CRLeft();
+        GUI.Label(upperLeft, "Matthew Doucette, " + Application.companyName); CRLeft();
+        GUI.Label(upperLeft, "http://xona.com/fractal/"); CRLeft();
+        GUI.Label(upperLeft, ""); CRLeft();
+        GUI.Label(upperLeft, "Unity " + Application.unityVersion); CRLeft();
+        GUI.Label(upperLeft, "Build: " + (Debug.isDebugBuild ? "Debug" : "Release")); CRLeft();
+        GUI.Label(upperLeft, "Genuine: " + (Application.genuine ? "Yes (Unaltered)" : "No (Altered)")); CRLeft();
+        GUI.Label(upperLeft, System.DateTime.Now.ToString("dddd, MMMM d, yyyy, h:mm:ss.fff tt")); CRLeft();
+        GUI.Label(upperLeft, ""); CRLeft();
+        GUI.Label(upperLeft, "Resolution: " + Screen.width + "x" + Screen.height); CRLeft();
+        GUI.Label(upperLeft, "Aspect Ratio: " + aspectRatioWidth + ":" + aspectRatioHeight + ": " + ((float)Screen.width / (float)Screen.height).ToString("0.000") + ":1"); CRLeft();
         // - app specific stats
-        GUI.Label(rectLeft, "Render Texture Size: " + renderTexture.width + "x" + renderTexture.height); CRLeft();
-        GUI.Label(rectLeft, ""); CRLeft();
+        GUI.Label(upperLeft, "Render Texture Size: " + renderTexture.width + "x" + renderTexture.height); CRLeft();
+        GUI.Label(upperLeft, ""); CRLeft();
         // - user controls
-        GUI.Label(rectLeft, "Press ESC/ALT-F4 to quit..."); CRLeft();
+        GUI.Label(upperLeft, "Press ESC/ALT-F4 to quit..."); CRLeft();
         // - fps stats
         GUI.skin.label.alignment = TextAnchor.UpperRight;
-        GUI.Label(rectRight, "FPS: " + fpsCurr.ToString("0.0")); CRRight();
-        GUI.Label(rectRight, "(froze) " + fpsCurrFroze.ToString("0.0")); CRRight();
-        GUI.Label(rectRight, "(avg) " + fpsAvg.ToString("0.0")); CRRight();
-        GUI.Label(rectRight, "(min) " + fpsMin.ToString("0.0")); CRRight();
-        GUI.Label(rectRight, "(max) " + fpsMax.ToString("0.0")); CRRight();
-        GUI.Label(rectRight, "(from last " + fpsBufferSize + " frames)"); CRRight();
-        GUI.Label(rectRight, "Time Scale: " + Time.timeScale.ToString("0.0") + "x"); CRRight();
+        GUI.Label(upperRight, "FPS: " + fpsCurr.ToString("0.0")); CRRight();
+        GUI.Label(upperRight, "(froze) " + fpsCurrFroze.ToString("0.0")); CRRight();
+        GUI.Label(upperRight, "(avg) " + fpsAvg.ToString("0.0")); CRRight();
+        GUI.Label(upperRight, "(min) " + fpsMin.ToString("0.0")); CRRight();
+        GUI.Label(upperRight, "(max) " + fpsMax.ToString("0.0")); CRRight();
+        GUI.Label(upperRight, "(from last " + fpsBufferSize + " frames)"); CRRight();
+        GUI.Label(upperRight, "Time Scale: " + Time.timeScale.ToString("0.0") + "x"); CRRight();
     }
 
     private void CRLeft()
     {
         // gui carriage return
-        rectLeft.y += CRHeight();
+        upperLeft.y += CRHeight();
     }
 
     private void CRRight()
     {
         // gui carriage return
-        rectRight.y += CRHeight();
+        upperRight.y += CRHeight();
     }
 
     private float CRHeight()

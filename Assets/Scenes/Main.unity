@@ -872,6 +872,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   renderTexture: {fileID: 8400000, guid: e0fe6a827978b2c4ebce0454e0a8597f, type: 2}
+  fpsBufferSize: 60
 --- !u!4 &1591002965
 Transform:
   m_ObjectHideFlags: 0
