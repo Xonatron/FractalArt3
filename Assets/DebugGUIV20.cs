@@ -51,9 +51,13 @@ public class DebugGUIV20 : MonoBehaviour
     float fpsAvg; // relating to fps buffer
 
     // aspect ratio
-    int aspectRatioWidth = 0; // 0 = temp value
-    int aspectRatioHeight = 0; // 0 = temp value
-    // TODO - CREATE AN ASPECT RATIO STRUCT to store width, height, and ratio
+    struct AspectRatio
+    {
+        public int width;
+        public int height;
+        public float ratio;
+    }
+    AspectRatio aspectRatio;
 
     // Start is called before the first frame update
     void Start()
@@ -82,7 +86,12 @@ public class DebugGUIV20 : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // calculate fps stats
+        CalculateFPSStats(); // calculate fps stats
+        aspectRatio = CalculateScreenAspectRatio(); // calculate aspect ratio (every frame as it can update in real-time in Unity editor)
+    }
+
+    void CalculateFPSStats()
+    {
         fpsBuffer[fpsIndex] = FPS();
         fpsCurr = fpsBuffer[fpsIndex];
         fpsCurrFroze = fpsBuffer[0];
@@ -90,9 +99,60 @@ public class DebugGUIV20 : MonoBehaviour
         fpsMin = fpsBuffer.Min(); // https://msdn.microsoft.com/en-us/library/system.linq.enumerable.min(v=vs.110).aspx
         fpsMax = fpsBuffer.Max(); // https://msdn.microsoft.com/en-us/library/system.linq.enumerable.max(v=vs.110).aspx
         IncFPSIndex(); // increment buffer pointer for next frame
+    }
 
-        // aspect ratio (why in update? aspect ratio can change in Unity editor / build)
-        CalculateScreenAspectRatio(ref aspectRatioWidth, ref aspectRatioHeight);
+    private AspectRatio CalculateScreenAspectRatio()
+    {
+        AspectRatio aspectRatio;
+
+        // calculate aspect ratio of screen resolution:
+        // 1) calculate greatest commmon divsor (GCD) of screen width and height
+        // 2) divide screen width and height by (GCD)
+        // 3) adjust to common aspect ratios: e.g. 8x5 --> 16:10
+        // 4) calculate ratio (width/height)
+
+        // 1) calculate greatest commmon divsor (GCD) of screen width and height
+        int gcd = GCD(Screen.width, Screen.height);
+
+        // 2) divide screen width and height by (GCD)
+        aspectRatio.width = Screen.width / gcd;
+        aspectRatio.height = Screen.height / gcd;
+        Debug.Assert(Screen.width % gcd == 0);
+        Debug.Assert(Screen.height % gcd == 0);
+
+        // 3) adjust to common aspect ratios:
+        // 8:5 --> 16:10
+        if ((aspectRatio.width == 8) && (aspectRatio.height == 5))
+        {
+            aspectRatio.width = 16; // 16:10 (accurate)
+            aspectRatio.height = 10; // 16:10 (accurate)
+        }
+        // 1366x768 --> 16:9 
+        if ((aspectRatio.width == 683) && (aspectRatio.height == 384))
+        {
+            aspectRatio.width = 16; // 16:9 (inaccurate) -- is there a way to catch these in calculations?!
+            aspectRatio.height = 9; // 16:9 (inaccurate) -- is there a way to catch these in calculations?!
+        }
+
+        // 4) calculate ratio
+        aspectRatio.ratio = ((float)Screen.width / (float)Screen.height);
+
+        return aspectRatio;
+    }
+
+    private int GCD(int a, int b)
+    {
+        int gcd = 1; // set gcd at 1
+        int minDistance = Math.Min(a, b); // only try to divide up to the smaller number
+        for (int i = 2; i < minDistance; i++) // i = 2..smallest_number-1; e.g. 1920x1080 --> 2..1079
+        {
+            // if a (larger) common divisor is found...
+            if ((Screen.width % i == 0) && (Screen.height % i == 0))
+            {
+                gcd = i; // ...update gcd
+            }
+        }
+        return gcd;
     }
 
     void OnGUI()
@@ -112,30 +172,12 @@ public class DebugGUIV20 : MonoBehaviour
         upperLeft.height = GUI.skin.font.lineHeight + fontHeightBuffer; // add buffer else will cut off text
         upperRight = upperLeft;
 
-        //Rect rect = new Rect();
-        //rect.x = 10.0f;
-        //rect.y = 10.0f;
-        //rect.width = Screen.width; // too short will cut off long text
-        //rect.height = Screen.height; // too short will cut off
-        //float crHeight = 15.0f; // carriage return (height) -- CAN WE DESIGN THIS TO CALCULATED AUTOMATICALLY FROM FONT SIZE???
-
-        // aspect ratio
-        int aspectRatioWidth = Screen.width; // temp value
-        int aspectRatioHeight = Screen.height; // temp value
-        CalculateScreenAspectRatio(ref aspectRatioWidth, ref aspectRatioHeight);
-
-        // fps
-        //float fpsCurrent = FPS();
-        //float fpsCurrentFixed = FPSPhysics();
-        //if (fpsCurrent > fpsHighest) fpsHighest = fpsCurrent;
-        //if (fpsCurrent < fpsLowest) fpsLowest = fpsCurrent;
-
         // gui output
         GUI.skin.label.alignment = TextAnchor.UpperLeft; // default
         // - app/credit stats
         GUI.Label(upperLeft, "\"" + Application.productName + "\" v" + Application.version); CRLeft();
         GUI.Label(upperLeft, "Matthew Doucette, " + Application.companyName); CRLeft();
-        GUI.Label(upperLeft, "http://xona.com/fractal/"); CRLeft();
+        GUI.Label(upperLeft, "xona.com/fractal"); CRLeft();
         GUI.Label(upperLeft, ""); CRLeft();
         GUI.Label(upperLeft, "Unity " + Application.unityVersion); CRLeft();
         GUI.Label(upperLeft, "Build: " + (Debug.isDebugBuild ? "Debug" : "Release")); CRLeft();
@@ -143,7 +185,7 @@ public class DebugGUIV20 : MonoBehaviour
         GUI.Label(upperLeft, System.DateTime.Now.ToString("dddd, MMMM d, yyyy, h:mm:ss.fff tt")); CRLeft();
         GUI.Label(upperLeft, ""); CRLeft();
         GUI.Label(upperLeft, "Resolution: " + Screen.width + "x" + Screen.height); CRLeft();
-        GUI.Label(upperLeft, "Aspect Ratio: " + aspectRatioWidth + ":" + aspectRatioHeight + ": " + ((float)Screen.width / (float)Screen.height).ToString("0.000") + ":1"); CRLeft();
+        GUI.Label(upperLeft, "Aspect Ratio: " + aspectRatio.width + ":" + aspectRatio.height + ": " + aspectRatio.ratio.ToString("0.000") + ":1"); CRLeft();
         // - app specific stats
         GUI.Label(upperLeft, "Render Texture Size: " + renderTexture.width + "x" + renderTexture.height); CRLeft();
         GUI.Label(upperLeft, ""); CRLeft();
@@ -208,51 +250,5 @@ public class DebugGUIV20 : MonoBehaviour
             return (1.0f / Time.deltaTime);
         else
             return (0.0f);
-    }
-
-    private void CalculateScreenAspectRatio(ref int aspectRatioWidth, ref int aspectRatioHeight)
-    {
-        // calculate aspect ratio of screen resolution:
-        // 1) calculate greatest commmon divsor (GCD) of screen width and height
-        // 2) divide screen width and height by (GCD)
-        // 3) adjust to common aspect ratios: e.g. 8x5 --> 16:10
-
-        // 1) calculate greatest commmon divsor (GCD) of screen width and height
-        int gcd = GCD(Screen.width, Screen.height);
-
-        // 2) divide screen width and height by (GCD)
-        aspectRatioWidth = Screen.width / gcd;
-        aspectRatioHeight = Screen.height / gcd;
-        Debug.Assert(Screen.width % gcd == 0);
-        Debug.Assert(Screen.height % gcd == 0);
-
-        // 3) adjust to common aspect ratios:
-        // 8:5 --> 16:10
-        if ((aspectRatioWidth == 8) && (aspectRatioHeight == 5))
-        {
-            aspectRatioWidth = 16; // 16:10 (accurate)
-            aspectRatioHeight = 10; // 16:10 (accurate)
-        }
-        // 1366x768 --> 16:9 
-        if ((aspectRatioWidth == 683) && (aspectRatioHeight == 384))
-        {
-            aspectRatioWidth = 16; // 16:9 (inaccurate) -- is there a way to catch these in calculations?!
-            aspectRatioHeight = 9; // 16:9 (inaccurate) -- is there a way to catch these in calculations?!
-        }
-    }
-
-    private int GCD(int a, int b)
-    {
-        int gcd = 1; // set gcd at 1
-        int minDistance = Math.Min(a, b); // only try to divide up to the smaller number
-        for (int i = 2; i < minDistance; i++) // i = 2..smallest_number-1; e.g. 1920x1080 --> 2..1079
-        {
-            // if a (larger) common divisor is found...
-            if ((Screen.width % i == 0) && (Screen.height % i == 0))
-            {
-                gcd = i; // ...update gcd
-            }
-        }
-        return gcd;
     }
 }
