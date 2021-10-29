@@ -108,13 +108,13 @@ public class DebugGUIV20 : MonoBehaviour
 
     private AspectRatio CalculateScreenAspectRatio()
     {
-        AspectRatio aspectRatio;
-
         // calculate aspect ratio of screen resolution:
         // 1) calculate greatest commmon divsor (GCD) of screen width and height
         // 2) divide screen width and height by (GCD)
         // 3) adjust to common aspect ratios: e.g. 8x5 --> 16:10
         // 4) calculate ratio (width/height)
+
+        AspectRatio aspectRatio;
 
         // 1) calculate greatest commmon divsor (GCD) of screen width and height
         int gcd = GCD(Screen.width, Screen.height);
@@ -145,7 +145,7 @@ public class DebugGUIV20 : MonoBehaviour
         return aspectRatio;
     }
 
-    private int GCD(int a, int b)
+    private int GCD(int a, int b) // greatest common divisor
     {
         int gcd = 1; // set gcd at 1
         int minDistance = Math.Min(a, b); // only try to divide up to the smaller number
