@@ -38,17 +38,21 @@ public class DebugGUIV20 : MonoBehaviour
     // | [text goes here]       [text goes here] |
     // |                                         |
 
-    // gui fps
+    // fps
     [Header("FPS Settings")]
     [Tooltip("FPS sample size (60 = sample FPS for 60 frames).")]
-    public int fpsBufferSize = 60; // 60 = sample fps stats for 60 frames
-    float[] fpsBuffer; // fps buffer; used for min/max/average
-    int fpsIndex = 0; // 0..9; index pointer that cycles through fps buffer
-    float fpsCurr;
-    float fpsCurrFroze; // snapshot a fps read and freeze it on the screen (until buffer updates; currently every 60 frames)
-    float fpsMin; // relating to fps buffer
-    float fpsMax; // relating to fps buffer
-    float fpsAvg; // relating to fps buffer
+    public int fpsBufferSize = 60; // number of samples in buffer; if 60, then 60 samples across 60 frames
+    struct FPS
+    {
+        public float[] buffer; // fps sample buffer (used to calculate various fps stats)
+        public int index; // index pointer that cycles through fps buffer; 0..59 if 60 samples
+        public float curr; // current fps
+        public float currFroze; // snapshot of current fps (until sample buffer updates; every 60 frames if 60 samples)
+        public float min; // minimum fps in buffer samples
+        public float max; // maximum fps in buffer samples
+        public float avg; // average fps in buffer samples
+    }
+    FPS fps;
 
     // aspect ratio
     struct AspectRatio
@@ -62,8 +66,9 @@ public class DebugGUIV20 : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        // gui fps
-        fpsBuffer = new float[fpsBufferSize]; // fps buffer; used for min/max/average
+        // fps
+        fps.index = 0; // start fps sample buffer at 0 (0..59 if 60 samples in buffer)
+        fps.buffer = new float[fpsBufferSize]; // fps buffer; used for min/max/average
 
         // gui depth
         GUI.depth = 0; // larger = further away
@@ -79,7 +84,7 @@ public class DebugGUIV20 : MonoBehaviour
         // initialize fps buffer
         for (int i = 0; i < fpsBufferSize; i++)
         {
-            fpsBuffer[i] = 60.0f; // initialize to 60 fps
+            fps.buffer[i] = 60.0f; // initialize to 60 fps
         }
     }
 
@@ -92,12 +97,12 @@ public class DebugGUIV20 : MonoBehaviour
 
     void CalculateFPSStats()
     {
-        fpsBuffer[fpsIndex] = FPS();
-        fpsCurr = fpsBuffer[fpsIndex];
-        fpsCurrFroze = fpsBuffer[0];
-        fpsAvg = fpsBuffer.Average(); // https://msdn.microsoft.com/en-us/library/bb354760(v=vs.110).aspx
-        fpsMin = fpsBuffer.Min(); // https://msdn.microsoft.com/en-us/library/system.linq.enumerable.min(v=vs.110).aspx
-        fpsMax = fpsBuffer.Max(); // https://msdn.microsoft.com/en-us/library/system.linq.enumerable.max(v=vs.110).aspx
+        fps.buffer[fps.index] = GetFPS();
+        fps.curr = fps.buffer[fps.index];
+        fps.currFroze = fps.buffer[0]; // can freeze on any sample buffer, might as well freeze on first
+        fps.avg = fps.buffer.Average(); // https://msdn.microsoft.com/en-us/library/bb354760(v=vs.110).aspx
+        fps.min = fps.buffer.Min(); // https://msdn.microsoft.com/en-us/library/system.linq.enumerable.min(v=vs.110).aspx
+        fps.max = fps.buffer.Max(); // https://msdn.microsoft.com/en-us/library/system.linq.enumerable.max(v=vs.110).aspx
         IncFPSIndex(); // increment buffer pointer for next frame
     }
 
@@ -193,11 +198,11 @@ public class DebugGUIV20 : MonoBehaviour
         GUI.Label(upperLeft, "Press ESC/ALT-F4 to quit..."); CRLeft();
         // - fps stats
         GUI.skin.label.alignment = TextAnchor.UpperRight;
-        GUI.Label(upperRight, "FPS: " + fpsCurr.ToString("0.0")); CRRight();
-        GUI.Label(upperRight, "(froze) " + fpsCurrFroze.ToString("0.0")); CRRight();
-        GUI.Label(upperRight, "(avg) " + fpsAvg.ToString("0.0")); CRRight();
-        GUI.Label(upperRight, "(min) " + fpsMin.ToString("0.0")); CRRight();
-        GUI.Label(upperRight, "(max) " + fpsMax.ToString("0.0")); CRRight();
+        GUI.Label(upperRight, "FPS: " + fps.curr.ToString("0.0")); CRRight();
+        GUI.Label(upperRight, "(froze) " + fps.currFroze.ToString("0.0")); CRRight();
+        GUI.Label(upperRight, "(avg) " + fps.avg.ToString("0.0")); CRRight();
+        GUI.Label(upperRight, "(min) " + fps.min.ToString("0.0")); CRRight();
+        GUI.Label(upperRight, "(max) " + fps.max.ToString("0.0")); CRRight();
         GUI.Label(upperRight, "(from last " + fpsBufferSize + " frames)"); CRRight();
         GUI.Label(upperRight, "Time Scale: " + Time.timeScale.ToString("0.0") + "x"); CRRight();
     }
@@ -222,8 +227,8 @@ public class DebugGUIV20 : MonoBehaviour
     private void IncFPSIndex()
     {
         // 0..59, if buffer size = 60
-        fpsIndex++; // increment index
-        if (fpsIndex >= fpsBufferSize) fpsIndex = 0; // wrap index to 0
+        fps.index++; // increment index
+        if (fps.index >= fpsBufferSize) fps.index = 0; // wrap index to 0
     }
 
     // frames per second notes:
@@ -233,7 +238,7 @@ public class DebugGUIV20 : MonoBehaviour
     // Time.fixedDeltaTime is AFFECTED by Time.timeScale
 
     // rendering frames/second
-    float FPS() // NOT affected by Time.timeScale
+    float GetFPS() // NOT affected by Time.timeScale
     {
         // catch divide by zero
         if (Time.unscaledDeltaTime != 0.0f)
@@ -243,7 +248,7 @@ public class DebugGUIV20 : MonoBehaviour
     }
     
     // physics frames/second
-    float FPSPhysics() // AFFECTED by Time.timeScale
+    float GetFPSPhysics() // AFFECTED by Time.timeScale
     {
         // catch divide by zero
         if (Time.fixedDeltaTime != 0.0f)
