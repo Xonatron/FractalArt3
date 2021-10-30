@@ -21,6 +21,9 @@ using System.Linq; // Enumerable Class: .Min(), .Max(), .Average(), etc.
 
 public class DebugGUIV20 : MonoBehaviour
 {
+    // enable/disable toggle
+    bool GUIenabled = true;
+
     // render texture
     public RenderTexture renderTexture;
 
@@ -91,6 +94,12 @@ public class DebugGUIV20 : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // process user input
+        if (Input.GetKeyDown(KeyCode.F3))
+        {
+            GUIenabled = !GUIenabled; // toggle
+        }
+
         CalculateFPSStats(); // calculate fps stats
         aspectRatio = CalculateScreenAspectRatio(); // calculate aspect ratio (every frame as it can update in real-time in Unity editor)
     }
@@ -162,6 +171,9 @@ public class DebugGUIV20 : MonoBehaviour
 
     void OnGUI()
     {
+        // enabled/disabled
+        if (!GUIenabled) return;
+
         // gui font
         GUI.skin.font = guiFont;
 
