@@ -130,6 +130,7 @@ public class DebugGUIV20 : MonoBehaviour
 
         // 1) calculate greatest commmon divsor (GCD) of screen width and height
         int gcd = GCD(Screen.width, Screen.height);
+        // TODO - only call this when screen resolution updates (or cache results)
 
         // 2) divide screen width and height by (GCD)
         aspectRatio.width = Screen.width / gcd;
