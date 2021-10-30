@@ -145,7 +145,7 @@ public class DebugGUIV20 : MonoBehaviour
             aspectRatio.width = 16; // 16:10 (accurate)
             aspectRatio.height = 10; // 16:10 (accurate)
         }
-        // 1366x768 --> 16:9 
+        // 1366x768 --> 16:9 (inaccurate)
         if ((aspectRatio.width == 683) && (aspectRatio.height == 384))
         {
             aspectRatio.width = 16; // 16:9 (inaccurate) -- is there a way to catch these in calculations?!
