@@ -21,8 +21,8 @@ using System.Linq; // Enumerable Class: .Min(), .Max(), .Average(), etc.
 
 public class DebugGUIV20 : MonoBehaviour
 {
-    // enable/disable toggle
-    bool GUIenabled = true;
+    // gui enable/disable toggle
+    bool GUIenabled; // default: debug = true, release = false
 
     // render texture
     public RenderTexture renderTexture;
@@ -69,6 +69,9 @@ public class DebugGUIV20 : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        // gui enable/disable toggle
+        GUIenabled = Debug.isDebugBuild; // default: debug = true, release = false
+
         // fps
         fps.index = 0; // start fps sample buffer at 0 (0..59 if 60 samples in buffer)
         fps.buffer = new float[fpsBufferSize]; // fps buffer; used for min/max/average
