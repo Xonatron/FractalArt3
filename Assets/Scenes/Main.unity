@@ -1536,7 +1536,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   period: 60
   h: 0
-  s: 0.25
+  s: 1
   v: 0.25
 --- !u!4 &975641365 stripped
 Transform:
@@ -1659,7 +1659,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   period: 60
   h: 0
-  s: 0.25
+  s: 1
   v: 0.25
 --- !u!20 &1116580523
 Camera:
