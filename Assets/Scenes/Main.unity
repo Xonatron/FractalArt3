@@ -1432,6 +1432,8 @@ GameObject:
   - component: {fileID: 963194228}
   - component: {fileID: 963194227}
   - component: {fileID: 963194226}
+  - component: {fileID: 963194229}
+  - component: {fileID: 963194230}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -1505,6 +1507,37 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &963194229
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 963194225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 02db7bef6daa97041beb553bbd41f443, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  minZ: -1.5
+  maxZ: -0.875
+  period: 120
+--- !u!114 &963194230
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 963194225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25cec1d6561844d43aa5edc0e8d297e8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  period: 60
+  h: 0
+  s: 0.25
+  v: 0.25
 --- !u!4 &975641365 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4466181639391318809, guid: f185deda8c3c37e478ded8d3fbaf9532, type: 3}
@@ -1590,6 +1623,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1116580521}
   - component: {fileID: 1116580523}
+  - component: {fileID: 1116580522}
   m_Layer: 0
   m_Name: Render Texture Camera
   m_TagString: Untagged
@@ -1611,6 +1645,22 @@ Transform:
   m_Father: {fileID: 963194228}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1116580522
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1116580520}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25cec1d6561844d43aa5edc0e8d297e8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  period: 60
+  h: 0
+  s: 0.25
+  v: 0.25
 --- !u!20 &1116580523
 Camera:
   m_ObjectHideFlags: 0
@@ -1621,7 +1671,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0}
+  m_BackGroundColor: {r: 0.1875, g: 0.25, b: 0.21090016, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -2348,7 +2398,7 @@ GameObject:
   - component: {fileID: 1683969171}
   - component: {fileID: 1683969170}
   m_Layer: 0
-  m_Name: Cubes
+  m_Name: FractalGrid
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2366,7 +2416,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a69d31f1ea95dd468fa656d6aec9357, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotationSpeed: 1
+  rotationSpeed: 0.5
 --- !u!4 &1683969171
 Transform:
   m_ObjectHideFlags: 0
