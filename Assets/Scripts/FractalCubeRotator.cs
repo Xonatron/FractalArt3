@@ -2,16 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CubeRotator : MonoBehaviour
+public class FractalCubeRotator : MonoBehaviour
 {
-    [Header("Fractal Settings")]
+    [Header("Fractal Cube Settings")]
     [Tooltip("Units = degrees / second")]
-    public float rotationSpeed; // degrees / second
+    public float rotationSpeed; // in degrees/second
 
     // Start is called before the first frame update
     void Start()
     {
-        
     }
 
     // Update is called once per frame
