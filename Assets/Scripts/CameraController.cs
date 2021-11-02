@@ -13,6 +13,7 @@ public class CameraController : MonoBehaviour
     [Header("Sine Wave:")]
     [Tooltip("Sine wave period, in seconds.")]
     public float period; // in seconds; sine wave period (1/frequency)
+    public float periodRandomVariance; // vary period up to this percent (0.01 = 1%)
     float frequency; // sine wave frequency (1/period)
     float amplitude; // sine wave amplitude (half distance between min & max)
     float avgZ; // average (middle) z-value
@@ -20,6 +21,8 @@ public class CameraController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        // init 
+        period = MathV10.RandomVariance(period, periodRandomVariance); // randomize period
         frequency = 1.0f / period;
         amplitude = (maxZ - minZ) / 2.0f;
         avgZ = (maxZ + minZ) / 2.0f;

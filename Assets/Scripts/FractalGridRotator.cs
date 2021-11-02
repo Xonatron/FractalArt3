@@ -10,10 +10,12 @@ public class FractalGridRotator : MonoBehaviour
     [Header("Fractal Grid Settings")]
     [Tooltip("Units = degrees / second")]
     public float rotationSpeed; // degrees / second
+    public float rotationSpeedRandomVariance; // vary rotation speed up to this percent (0.01 = 1%)
 
     // Start is called before the first frame update
     void Start()
     {
+        rotationSpeed = MathV10.RandomVariance(rotationSpeed, rotationSpeedRandomVariance); // randomize rotation speed
     }
 
     // Update is called once per frame

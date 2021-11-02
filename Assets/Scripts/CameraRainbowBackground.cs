@@ -16,6 +16,7 @@ public class CameraRainbowBackground : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        // init
         frequency = 1.0f / period;
     }
 
