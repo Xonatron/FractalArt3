@@ -1,12 +1,12 @@
 # Fractal Art v3
 ![2021-10-30 (3)](https://github.com/Xonatron/FractalArt3/assets/7736471/b67f302e-c863-42a3-b62b-a9fca0d8d8da)
-## Description:
+## Description
 3rd version of my "Fractal Art" effect.
-## Tech:
+## Tech
 - Unity 2020.3.14f1
 - Visual Studio 2015
 - C#
-## Videos:
+## Videos
 - https://youtu.be/fpyS-u69-zs (Unity: Fractal Art v3 (PC) - 1.5 Hours of Fractal Art)
 - https://youtu.be/70OTK0SRTGw (NSCC Truro Campus - The Makers Exhibit 2021 - A Joint Staff & Student Art Show (SNEAK PEAK))
 ## Screenshots
